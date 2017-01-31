@@ -14,19 +14,19 @@ mainPEP.py
 Perform model training, EPI prediction and performance evaluation in PEP-Motif, PEP-Word, and PEP-Integrate
 Functions include but are limited to:
 
---run_motif
+- run_motif
   EPI prediction and evaluation using cross validation for PEP-Motif
   
---run_word
+- run_word
   EPI prediction and evaluation using cross validation for PEP-Word
   
---run_integrate
+- run_integrate
   EPI prediction and evaluation using cross validation for PEP-Integrate
   
---run_shuffle
+- run_shuffle
   Shuffle feature orders for testing of PEP modules and repeating feature importance estimation to address that estimated importance can be affected by the order of features if they have equal predicitive effect
   
---parametered_cv
+- parametered_cv
   Cross validation using gradient tree boosting
 
 genVecs.py 
@@ -37,9 +37,9 @@ processSeq.py
 Perform pre-processing of DNA sequences
 The functions include:
 
--- extract DNA sequences from enhancer regions or promoter regions
+- extract DNA sequences from enhancer regions or promoter regions
 
--- extract word (K-mers) from enhancer or promoter DNA sequences
+- extract word (K-mers) from enhancer or promoter DNA sequences
 
 genLabelData.py.
 Generate paired enhancer-promoter samples with labels from the EPI datasets to prepare for supervised training in PEP modules
