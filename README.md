@@ -25,7 +25,7 @@ Functions include but are limited to:
   Cross validation using gradient tree boosting
 
 genVecs.py 
-Generate feature vectors for enhancer-promoter pairs based on word embedding model and weighted pooling in PEP-Word
+Generate feature vectors for enhancer-promoter pairs based on the word embedding model and weighted pooling in PEP-Word
 Train a word embedding model in an unsupervised way given the samples generated using genUnlabelData.py
 
 processSeq.py
