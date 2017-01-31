@@ -28,6 +28,7 @@ import xgboost as xgb
 from sklearn.decomposition import PCA
 import random
 
+# Obtain sample labels and sample weights
 def getData(type,cell):
 	data = pd.read_table('./Data/Learning/supervised_'+str(cell)+"_"+str(type))
 	data['predict'] = pd.Series(0,index = data.index)
@@ -39,6 +40,7 @@ def getData(type,cell):
 	print max(data["weight"])
 	return data
 
+# Performance evaluation and result analysis without using adjusted thresholds
 def analyzeResult_temp(data,model,DataVecs):
 	predict = model.predict(DataVecs)
 	data['predict'] = predict
@@ -58,6 +60,7 @@ def analyzeResult_temp(data,model,DataVecs):
 	except:
 		print "ROC unavailable"
 
+# Performance evaluation and result analysis uing adjusted thresholds
 def analyzeResult(data,model,DataVecs,threshold):
 	predict = model.predict_proba(DataVecs)[:,1]
 	True,False=1,0
@@ -78,6 +81,7 @@ def analyzeResult(data,model,DataVecs,threshold):
 	except:
 		print "ROC unavailable"
 
+# Performance evaluation
 def score_func(estimator,X,Y):
 	global accuracy,precision,recall,f1,mcc,auc,aupr,resultpredict,resultproba,resultlabel
 	predict_proba = estimator.predict_proba(X)[:,1]
@@ -96,6 +100,7 @@ def score_func(estimator,X,Y):
 	print "finish one"
 	return matthews_corrcoef(Y,predict)
 
+# Performance evaluation
 def score_function(y_test,yfit):
 	precision = precision_score(y_test,yfit)
 	recall = recall_score(y_test,yfit)
@@ -103,6 +108,7 @@ def score_function(y_test,yfit):
 	mcc = matthews_corrcoef(y_test,yfit)
 	return precision, recall, f1, mcc
 
+# Randomly sample balanced sizes of postiive and negative samples, used only when data balance is required
 def balance_data(data,dataDataVecs):
 	data.index = xrange(len(data))
 	posdata = data[data["label"] == 1]
@@ -118,6 +124,7 @@ def balance_data(data,dataDataVecs):
 	data.index = xrange(len(data))
 	return data,dataDataVecs
 
+# Prediction and evaluation using cross validation with PEP-Word without retaining probabilistic output from each round 
 def run(word, num_features,k,type,cell):
 
 	warnings.filterwarnings("ignore")
@@ -167,6 +174,7 @@ def run(word, num_features,k,type,cell):
 
 	df.to_csv("./Result/"+str(cell)+str(type)+".csv",index = False)
 
+# Estimate threshold for the classifier base on a single split of training/test data
 def threshold_estimate(x,y):
 	x_train, x_test, y_train, y_test = cross_validation.train_test_split(x, y, test_size=0.1, random_state=0)
 	weight = float(len(y_train[y_train == 0]))/float(len(y_train[y_train == 1]))
@@ -183,6 +191,7 @@ def threshold_estimate(x,y):
 	print("%d %f %f" % (precision.shape[0], f1[m_idx], m_thresh))
 	return m_thresh
 
+# Estimate threshold for the classifier using inner-round cross validation
 def threshold_estimate_cv(x,y,k_fold):
 	print "%d %d %d" % (y.shape[0], sum(y==1), sum(y==0))
 	kf1 = StratifiedKFold(y, n_folds=k_fold, shuffle=True, random_state=0)
@@ -397,20 +406,6 @@ def run_motif(word, num_features,k,type,cell):
 	print "y2: %d %d" % (sum(y2==1), sum(y2==0))
 	print "generate motif data shuffled"
 	x2 = x2[:,sel_idx]
-	#x3 = np.zeros(x1.shape)
-	#y3 = np.zeros(x1.shape[0])
-	#print "y1: %d %d" % (sum(y1==1), sum(y1==0))
-	#print "y3: %d %d" % (sum(y3==1), sum(y3==0))
-	#serial3 = np.array(range(0,x1.shape[0]))
-	#print serial3.shape
-	#random.shuffle(serial3)
-	#x3[serial3,:] = x1
-	#y3[serial3] = y1
-	#print "%d %d %d %d"%(x1.shape[0],x1.shape[1],x3.shape[0],x3.shape[1])
-	#print "y1: %d %d" % (sum(y1==1), sum(y1==0))
-	#print "y3: %d %d" % (sum(y3==1), sum(y3==0))
-	#filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_4kshuffle1.mat"%(str(type),str(cell))
-	#scipy.io.savemat(filename, mdict={'seq_1':x2,'lab_1':y2,'serial1':serial1,'seq_2':x3,'lab_2':y3,'serial2':serial3})
 	
 	k_fold = 10
 	k_fold1 = 5
@@ -447,15 +442,6 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 	print "Loading Datavecs"
 	dataDataVecs = np.load("./Datavecs/datavecs_"+str(cell)+"_"+str(type)+".npy")
 	x = sklearn.preprocessing.StandardScaler().fit_transform(dataDataVecs)
-	#y = data["label"]
-	#y = np.asarray(y)
-	#n_vec1 = range(0,x.shape[1]);
-	#n_vec2 = range(0,x.shape[1]);
-	#random.shuffle(n_vec2);
-	#print "%f %f %f"%(x[0,0],x[0,1],x[0,2])
-	#x = x[:,n_vec2]
-	#print "%f %f %f"%(x[0,0],x[0,1],x[0,2])
-	#print y.shape
 
 	filename1 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_4ks2.txt"%(str(type), str(cell))
 	filename2 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_4ks2.mat"%(str(type), str(cell))
@@ -521,7 +507,7 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 		filename4 = "test_%s%s_wordthresh2_4ks2test_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
-# leave out chromosomes for testing for PEP-Integrate
+# Shuffle feature orders for testing of PEP modules and repeating feature importance estimation
 def run_shuffle(word, num_features,k,type,cell,sel_num):
 
 	warnings.filterwarnings("ignore")
