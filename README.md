@@ -12,7 +12,7 @@ mainEntrance function and options of model setting parameters provided
 
 mainPEP.py 
 Perform model training, EPI prediction and performance evaluation in PEP-Motif, PEP-Word, and PEP-Integrate
-Functions include but are limited to:
+Functions included but not limited to:
 - run_motif
 
   EPI prediction and evaluation using cross validation for PEP-Motif
@@ -39,7 +39,7 @@ Train a word embedding model in an unsupervised way given the samples generated 
 
 processSeq.py
 Perform pre-processing of DNA sequences
-The functions include:
+Functions included:
 
 - extract DNA sequences from enhancer regions or promoter regions
 
