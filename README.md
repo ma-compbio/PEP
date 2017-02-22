@@ -54,7 +54,8 @@ Generate sentences (list of words/K-mers) from enhancer or promoter regions with
 
 ************************************************************************************
 # Usage
-The command to use PEP for predicting enhancer promoter interactions is as follows:\
+The command to use PEP for predicting enhancer promoter interactions is as follows:
+
 python PEP.py [Options] 
 
 - -f, --feature : the number of features of Word2Vec model, default = 300
