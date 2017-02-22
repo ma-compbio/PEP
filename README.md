@@ -68,7 +68,7 @@ python PEP.py [Options]
 - -s, --sel : the number of motif features to be used in the feature integration (PEP-Integrate) mode, default=50
 - -e, --thresh_mode: the mode of estimating threshold for the predictor: 0- default threshold (threshold = 0.5); 1- simple mode; 2- 5 fold inner round cross validation , default=1
 
-- Example: python PEP.py -c 'K562' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
+Example: python PEP.py -c 'K562' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
 
 ************************************************************************************
 # Required pre-installed packages
