@@ -4,7 +4,7 @@ import genLabelData,genUnlabelData,mainEdit,genVecs
 import os.path
 
 def parse_args():
-	parser = OptionParser(usage="RNA editing prediction", add_help_option=False)
+	parser = OptionParser(usage="Enhancer Promoter Interaction Prediction", add_help_option=False)
 	parser.add_option("-f", "--feature", default="300", help="Set the number of features of Word2Vec model")
 	parser.add_option("-g","--generate",default="true", help="Generate the Data or Use the ones before")
 	parser.add_option("-t","--type",default="ep",help="eep data or ep data")
