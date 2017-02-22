@@ -52,6 +52,22 @@ Labels indicate whether a sample is positive (interacting enhancer/promoter pair
 genUnlabelData.py
 Generate sentences (list of words/K-mers) from enhancer or promoter regions without labels for training a word embedding model in the enhancers or promoters respectively
 
+************************************************************************************
+# Usage
+The command to use PEP for predicting enhancer promoter interactions is as follows:
+python PEP.py [Options] 
+
+- -f, --feature : the number of features of Word2Vec model, default = 300
+- -g, --generate : to generate the data for word embedding model training or to use the ones before, default = true
+- -t, --type : to use E/P (Enhancer/Promoter) data or EE/P (Extended Enhancer/Promoter) data, default = ep
+- -c, --cell : the cell line used for training and evaluation, default = GM12878
+- -k, --k: minimum occurences of a word in a sequence if the word can be used for word embedding model training, default = 1
+- -w, --word : the length of word (K-mer) used for word embedding model training, default = 6
+- -i, --integrate : to use integrated features or not, default = "false"
+- -s, --sel : the number of motif features to be used in the feature integration (PEP-Integrate) mode, default=50
+- -e, --thresh_mode: the mode of estimating threshold for the predictor: 0- default threshold (threshold = 0.5); 1- simple mode; 2- 5 fold inner round cross validation , default=1
+
+- Example: python PEP.py -c 'K562' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
 
 ************************************************************************************
 # Required pre-installed packages
