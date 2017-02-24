@@ -68,7 +68,18 @@ python PEP.py [Options]
 - -s, --sel : the number of motif features to be used in the feature integration (PEP-Integrate) mode, default=50
 - -e, --thresh_mode: the mode of estimating threshold for the predictor: 0- default threshold (threshold = 0.5); 1- simple mode; 2- 5 fold inner round cross validation , default=1
 
-Example: python PEP.py -c 'K562' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
+Example: python PEP.py -c 'GM12878' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
+
+To use PEP-Word, please create two folders named "Data" and "DataVecs" in the same directory with the PEP source code.  
+- Please create a subfolder named "Learning" in the folder "Data", and please place genome sequence data needed in "Learning". 
+- Please create a subfolder for each cell line in the folder "Data" to place the annotations for enhancers/promoters and samples of enhancer-promoter pairs. For example, create a subfolder named "K562" and place the enhancers.bed, promoters.bed and training samples with given enhancer/promoter regions in the folder. 
+
+We created the folders needed as an example. We provided some example data in the subfolder "GM12878" under "Data". The format of example data can be followed if you will use your own data. The enhancers.bed and promoters.bed provid genome locations of all the annotated active enhancers and promoters in the corresponding cell line, which are used for training the word embedding model. There are four columns representing chromosome, start position, ending position, and the name of an enhancer/promoter respectively in the enhancers.bed or promoters.bed. Please add the column names "chromosome", "start", "end", and "name" if you use your own annotation files. The file pairs_ep.csv comprises the positive and negative samples in cell line GM12878. The example data are from [1].
+
+If you use the command PEP.py -c 'GM12878' -t 'ep', the procedures of PEP-Word will be performed, which involve unsupervised training of word embeding model, supervised training of a Gradient Tree Boosting classifier and making predicitons of enhancer promoter interactions (EPIs). The results will be output in the same directory of the source code.
+
+References:
+[1] S. Whalen, R. M. Truty, and K. S. Pollard. Enhancer-promoter interactions are encoded by complex genomic signatures on looping chromatin. Nature genetics, 48(5):488–496, 2016.
 
 ************************************************************************************
 # Required pre-installed packages
@@ -77,5 +88,7 @@ PEP requires the following packages to be installed:
 - XGBoost (available from https://github.com/dmlc/xgboost)
 - scikit-learn (tested on version 0.17)
 - pandas (tested on version 0.17.1)
+- numpy (tested on version 1.11.1)
 
+You could install the Anaconda (avilable from https://www.continuum.io/downloads), which provides a open souce collection of widely used data science packages including Python and numpy. PEP is tested using Anaconda 4.1.1.
 
