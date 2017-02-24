@@ -34,10 +34,12 @@ Functions included but not limited to:
   Cross validation using gradient tree boosting
 
 genVecs.py 
+
 Generate feature vectors for enhancer-promoter pairs based on the word embedding model and weighted pooling in PEP-Word
 Train a word embedding model in an unsupervised way given the samples generated using genUnlabelData.py
 
 processSeq.py
+
 Perform pre-processing of DNA sequences
 Functions included:
 
@@ -45,11 +47,13 @@ Functions included:
 
 - extract word (K-mers) from enhancer or promoter DNA sequences
 
-genLabelData.py.
+genLabelData.py
+
 Generate paired enhancer-promoter samples with labels from the EPI datasets to prepare for supervised training in PEP modules
 Labels indicate whether a sample is positive (interacting enhancer/promoter pair) or negative (non-interaction enhancer/promoter pair)
 
 genUnlabelData.py
+
 Generate sentences (list of words/K-mers) from enhancer or promoter regions without labels for training a word embedding model in the enhancers or promoters respectively
 
 ************************************************************************************
@@ -74,11 +78,14 @@ To use PEP-Word, please create two folders named "Data" and "DataVecs" in the sa
 - Please create a subfolder named "Learning" in the folder "Data", and please place genome sequence data needed in "Learning". 
 - Please create a subfolder for each cell line in the folder "Data" to place the annotations for enhancers/promoters and samples of enhancer-promoter pairs. For example, create a subfolder named "K562" and place the enhancers.bed, promoters.bed and training samples with given enhancer/promoter regions in the folder. 
 
-We created the folders needed as an example. We provided some example data in the subfolder "GM12878" under "Data". The format of example data can be followed if you will use your own data. The enhancers.bed and promoters.bed provid genome locations of all the annotated active enhancers and promoters in the corresponding cell line, which are used for training the word embedding model. There are four columns representing chromosome, start position, ending position, and the name of an enhancer/promoter respectively in the enhancers.bed or promoters.bed. Please add the column names "chromosome", "start", "end", and "name" if you use your own annotation files. The file pairs_ep.csv comprises the positive and negative samples in cell line GM12878. The example data are from [1].
+We created the folders needed as an example. We provided some example data in the subfolder "GM12878" under "Data". The format of example data can be followed if you use your own data. The example data are from [1].
+- The enhancers.bed and promoters.bed provide genome locations of all the annotated active enhancers and promoters in the corresponding cell line, which are used for training the word embedding model. There are four columns representing chromosome, start position, ending position, and the name of an enhancer/promoter respectively in the enhancers.bed or promoters.bed. Please add the column names "chromosome", "start", "end", and "name" if you use your own annotation files. 
+- The file pairs_ep.csv comprises the positive and negative samples in cell line GM12878. 
 
 If you use the command PEP.py -c 'GM12878' -t 'ep', the procedures of PEP-Word will be performed, which involve unsupervised training of word embeding model, supervised training of a Gradient Tree Boosting classifier and making predicitons of enhancer promoter interactions (EPIs). The results will be output in the same directory of the source code.
 
 References:
+
 [1] S. Whalen, R. M. Truty, and K. S. Pollard. Enhancer-promoter interactions are encoded by complex genomic signatures on looping chromatin. Nature genetics, 48(5):488–496, 2016.
 
 ************************************************************************************
