@@ -18,11 +18,11 @@ from gensim import corpora, models, similarities
 
 class mycorpuse(object):
 	def __iter__(self):
-		for line in open("./Data/Learning/unlabeled_train_enhancer_HeLa-S3"):
+		for line in open("./Data/Learning/unlabeled_train_enhancer_GM12878"):
 			yield line.split()
 class mycorpusp(object):
 	def __iter__(self):
-		for line in open("./Data/Learning/unlabeled_train_promoter_HeLa-S3"):
+		for line in open("./Data/Learning/unlabeled_train_promoter_GM12878"):
 			yield line.split()
 
 # Load training data
