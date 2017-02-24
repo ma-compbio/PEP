@@ -54,7 +54,7 @@ Labels indicate whether a sample is positive (interacting enhancer/promoter pair
 
 genUnlabelData.py
 
-Generate sentences (list of words/K-mers) from enhancer or promoter regions without labels for training a word embedding model in the enhancers or promoters respectively
+Generate sentences (list of words/K-mers) from enhancer or promoter regions without labels for training a word embedding model for the enhancers or promoters respectively
 
 ************************************************************************************
 # Usage
