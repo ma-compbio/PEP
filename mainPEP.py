@@ -167,10 +167,6 @@ def run(word, num_features,k,type,cell):
 	result = result[1:len(result)]
 	df = pd.DataFrame(result,columns=['index','label','predict','proba'])
 	df = df.sort(columns='index')
-	#table_name = "./Data/"+str(cell)+"/pairs_"+str(type)+".csv"
-	#table = pd.read_table(table_name,sep=",")
-	#table["proba"] = df["proba"]
-	#table["predict"] = df["predict"]
 
 	df.to_csv("./Result/"+str(cell)+str(type)+".csv",index = False)
 
@@ -202,20 +198,18 @@ def threshold_estimate_cv(x,y,k_fold):
 	for train_index, test_index in kf1:
 		x_train, x_test = x[train_index], x[test_index]
 		y_train, y_test = y[train_index], y[test_index]
-		#print "%d %d %d %d" % (y_train.shape[0], sum(y_train==1), sum(y_train==0), k_fold)
-		#print "%d %d %d %d" % (y_test.shape[0], sum(y_test==1), sum(y_test==0), k_fold)
+
 		w1 = np.array([1]*y_train.shape[0])
 		weight = float(len(y_train[y_train == 0]))/float(len(y_train[y_train == 1]))
 		w1 = np.array([1]*y_train.shape[0])
 		w1[y_train==1]=weight
-		#print("samples: %d %d %d %f" % (x_train.shape[0], x_test.shape[0], x_train.shape[1], weight))
+
 		estimator = xgb.XGBClassifier(max_depth=10, learning_rate=0.1, n_estimators=1000, nthread=50)
 		estimator.fit(x_train, y_train, sample_weight=w1)
 		y_scores = estimator.predict_proba(x_test)[:,1]
 		precision, recall, thresholds = precision_recall_curve(y_test, y_scores)
 		f1 = 2*precision[2:]*recall[2:]/(precision[2:]+recall[2:])
 		m_idx = np.argmax(f1)
-		# m_thresh += thresholds[2+m_idx]
 		threshold[cnt] = thresholds[2+m_idx]
 		cnt += 1
 		print("%d %f %f" % (precision.shape[0], f1[m_idx], thresholds[2+m_idx]))
@@ -240,7 +234,6 @@ def parametered_cv(x,y,k_fold,k_fold1):
 		x_train, x_test = x[train_index], x[test_index]
 		y_train, y_test = y[train_index], y[test_index]
 		print y_train.shape
-		#print "%d %d" % (sum(y_train==1), sum(y_train==0))
 		print("%d %d %d %d" % (x_train.shape[0], x_train.shape[1], x_test.shape[0], x_test.shape[1]))
 		if k_fold1>1:
 			thresh, thresh_vec = threshold_estimate_cv(x_train,y_train,k_fold1)
@@ -248,20 +241,14 @@ def parametered_cv(x,y,k_fold,k_fold1):
 			thresh = threshold_estimate(x_train,y_train)
 		else:
 			thresh = 0.5
-		# thresholds = np.concatenate((thresholds,thresh_vec),axis=0)
-		# thresh = threshold_estimate(x_train,y_train)
 		print("%d %f" % (x_train.shape[0], thresh))
 		weight = float(len(y_train[y_train == 0]))/float(len(y_train[y_train == 1]))
 		w1 = np.array([1]*y_train.shape[0])
 		w1[y_train==1]=weight
 		weight1 = float(len(y_test[y_test == 0]))/float(len(y_test[y_test == 1]))
 		clf = xgb.XGBClassifier(max_depth=10, learning_rate=0.1, n_estimators=1000, nthread=50)
-		#clf = ensemble.GradientBoostingClassifier(**params)
-		#clf = RandomForestClassifier(n_estimators=1000)
 		clf.fit(x_train, y_train, sample_weight=w1)
 		prob = clf.predict_proba(x_test)
-		#yfit1 = clf.predict(x_test)
-		#score = clf.score(x_test,y_test,sample_weight=w2)
 		yfit1 = (prob[:,1]>thresh)
 		index = np.concatenate((index,test_index),axis=0)
 		label = np.concatenate((label,y_test),axis=0)
@@ -271,7 +258,6 @@ def parametered_cv(x,y,k_fold,k_fold1):
 		print metrics[cnt,:]
 		cnt += 1
 		predicted = np.concatenate((predicted,prob),axis=0)	
-		# print("%d %d: %f %f %f %f" % (label.shape[0],predicted.shape[0],precision,recall,f1,mcc))
 		importances, importances_1 = clf.feature_importances_
 		indices1 = np.argsort(importances)[::-1]
 		feature_1 = np.transpose(np.array((indices1,importances[indices1])))
@@ -279,8 +265,8 @@ def parametered_cv(x,y,k_fold,k_fold1):
 		indices2 = np.argsort(importances_1)[::-1]
 		feature_2 = np.transpose(np.array((indices2,importances_1[indices2])))
 		features2 = np.concatenate((features2,feature_2),axis=0)
+		
 	pred = np.transpose(np.array((index,label,yfit)))
-	# np.savetxt('test_epk562com_gradient3thresh2_4ks2.txt', thresholds, fmt='%f', delimiter='\t')
 	print "%d %d" % (metrics.shape[0],metrics.shape[1])
 	aver_metrics = np.mean(metrics,axis=0)
 	print aver_metrics.shape
@@ -307,8 +293,6 @@ def parametered_single(x_train,y_train,x_test,y_test,thresh_opt):
 	clf.fit(x_train, y_train, sample_weight=w1)
 
 	prob = clf.predict_proba(x_test)
-	#yfit1 = clf.predict(x_test)
-	#score = clf.score(x_test,y_test,sample_weight=w2)
 	yfit = (prob[:,1]>thresh)
 
 	precision, recall, f1, mcc = score_function(y_test,yfit)
@@ -370,8 +354,8 @@ def run_motif(word, num_features,k,type,cell):
 	# Read data
 	data = getData(type,cell)
 
-	filename1 = "/home/yy3/sequences/ep%s_sel_union_balanced_inter_4ks2_add2a.txt"%(str(cell))
-	filename2 = "/home/yy3/sequences/ep%s_sel_union_balanced_inter_4ks2_add2a.mat"%(str(cell))
+	filename1 = "./ep%s_sel_union_balanced_inter_4ks2_add2a.txt"%(str(cell))
+	filename2 = "./ep%s_sel_union_balanced_inter_4ks2_add2a.mat"%(str(cell))
 	if(os.path.exists(filename1)==True):
 		f = open(filename1, 'r')
 		print("Feature importance 1 loaded")
@@ -384,14 +368,14 @@ def run_motif(word, num_features,k,type,cell):
 	else:
 		print "Error of file importance file!"
 
-	filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_4k.mat"%(str(type),str(cell))
+	filename = "./pairs_%s%s_motif.mat"%(str(type),str(cell))
 	data = scipy.io.loadmat(filename)
 	x1 = np.asmatrix(data['seq_m'])
 	y1 = np.ravel(data['lab_m'])
 	y1[y1<0]=0
 	print "%d %d" % (sum(y1==1), sum(y1==0))
 	print "load motif data shuffled"
-	filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_4kserial.mat"%(str(type),str(cell))
+	filename = "./pairs_%s%s_motif_serial.mat"%(str(type),str(cell))
 	data1 = scipy.io.loadmat(filename)
 	serial1 = np.ravel(data1['serial1'])
 	serial2 = np.ravel(data1['serial2'])
@@ -414,14 +398,13 @@ def run_motif(word, num_features,k,type,cell):
 	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x2,y2,k_fold,k_fold1,serial)
 
 	sel_num = 400
-	filename1 = "test_%s%s_motiflab_4ks2test1_sel%da.txt"%(str(type), str(cell), sel_num)
-	filename2 = "test_%s%s_motifprob_4ks2test1_sel%da.txt"%(str(type), str(cell), sel_num)
-	filename3 = "test_%s%s_motiffeature_4ks2test1_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename1 = "test_%s%s_motiflab_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename2 = "test_%s%s_motifprob_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename3 = "test_%s%s_motiffeature_sel%da.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
 	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
-	# filename4 = "test_epk562_gradient3thresh1_4ks2_add2a1_sel.txt"
-	filename4 = "test_%s%s_motifthresh2_4ks2test1_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename4 = "test_%s%s_motifthresh2_sel%da.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Cross validation for PEP-Integrate
@@ -443,10 +426,8 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 	dataDataVecs = np.load("./Datavecs/datavecs_"+str(cell)+"_"+str(type)+".npy")
 	x = sklearn.preprocessing.StandardScaler().fit_transform(dataDataVecs)
 
-	filename1 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_4ks2.txt"%(str(type), str(cell))
-	filename2 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_4ks2.mat"%(str(type), str(cell))
-	#filename1 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_3ks2.txt"%(str(type), str(cell))
-	#filename2 = "/home/yy3/sequences/%s%s_sel_union_balanced_inter_3ks2.mat"%(str(type), str(cell))
+	filename1 = "./%s%s_sel_union_balanced_inter.txt"%(str(type), str(cell))
+	filename2 = "./%s%s_sel_union_balanced_inter.mat"%(str(type), str(cell))
 	if(os.path.exists(filename1)==True):
 		f = open(filename1, 'r')
 		print("Feature importance 1 loaded")
@@ -459,15 +440,13 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 	else:
 		print "Error of file importance file!"
 
-	filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_4k.mat"%(str(type),str(cell))
-	#filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1.mat"%(str(type),str(cell))
+	filename = "./pairs_%s%s_motif.mat"%(str(type),str(cell))
 	data = scipy.io.loadmat(filename)
 	x1 = np.asarray(data['seq_m'])
 	y1 = np.ravel(data['lab_m'])
 	y1[y1<0]=0
 	print "load motif data"
-	filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_4kserial.mat"%(str(type),str(cell))
-	#filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1_3kserial.mat"%(str(type),str(cell))
+	filename = "./pairs_%s%s_motif_serial.mat"%(str(type),str(cell))
 	data1 = scipy.io.loadmat(filename)
 	serial1 = np.ravel(data1['serial1'])
 	serial2 = np.ravel(data1['serial2'])
@@ -488,9 +467,7 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 		tmp1 = tmp[:,sel_idx[0:sel_num]]
 		print tmp1.shape
 		x_2 = np.hstack((x,tmp1))
-		#x_2 = x_2[1500:2500,:]
 		y_2 = y2[serial2]
-		#y_2 = y_2[1500:2500]
 		print "%d %d %d %d %d %d"%(x.shape[0],x.shape[1],x1.shape[0],x1.shape[1],x2.shape[0],x2.shape[1])
 		print "%d %d" % (sum(y_2==1), sum(y_2==0))
 	
@@ -498,13 +475,13 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 		k_fold1 = 5
 		metrics_vec, pred, predicted, features1, features2 = parametered_cv(x_2,y_2,k_fold,k_fold1)
 
-		filename1 = "test_%s%s_wordlab_4ks2test_sel%dcv.txt"%(str(type), str(cell), sel_num)
-		filename2 = "test_%s%s_wordprob_4ks2test_sel%dcv.txt"%(str(type), str(cell), sel_num)
-		filename3 = "test_%s%s_wordfeature_4ks2test_sel%dcv.txt"%(str(type), str(cell), sel_num)
+		filename1 = "test_%s%s_wordlab_sel%dcv.txt"%(str(type), str(cell), sel_num)
+		filename2 = "test_%s%s_wordprob_sel%dcv.txt"%(str(type), str(cell), sel_num)
+		filename3 = "test_%s%s_wordfeature_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 		np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
 		np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
-		filename4 = "test_%s%s_wordthresh2_4ks2test_sel%dcv.txt"%(str(type), str(cell), sel_num)
+		filename4 = "test_%s%s_wordthresh2_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Shuffle feature orders for testing of PEP modules and repeating feature importance estimation
@@ -518,8 +495,7 @@ def run_shuffle(word, num_features,k,type,cell,sel_num):
 	sel_num = int(sel_num)
 	print "shuffle features..."
 
-	filename = "/home/yy3/seq_data/sequences/pairs_%s%s_motif1bn_1_4k.mat"%(str(type),str(cell))
-	#filename = "/home/yy3/sequences/pairs_%s%s_motif1bn_1.mat"%(str(type),str(cell))
+	filename = "./pairs_%s%s_motif.mat"%(str(type),str(cell))
 	data = scipy.io.loadmat(filename)
 	x1 = np.asarray(data['seq_m'])
 	y = np.ravel(data['lab_m'])
@@ -534,16 +510,16 @@ def run_shuffle(word, num_features,k,type,cell,sel_num):
 	print "%d %d %d %d"%(x1.shape[0],x1.shape[1],x.shape[0],x.shape[1])
 	print "y: %d %d" % (sum(y==1), sum(y==0))
 
-	filename4 = "test_%s%s_motifidx_4ks2test_shuffle%d.txt"%(str(type), str(cell), sel_num)
+	filename4 = "test_%s%s_motifidx_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename4, np.array((range(0,x1.shape[1]),serial3)).T, fmt='%d %d', delimiter='\t')
 
 	k_fold = 10
 	k_fold1 = 0
 	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1)
 
-	filename1 = "test_%s%s_motiflab_4ks2test_shuffle%d.txt"%(str(type), str(cell), sel_num)
-	filename2 = "test_%s%s_motifprob_4ks2test_shuffle%d.txt"%(str(type), str(cell), sel_num)
-	filename3 = "test_%s%s_motiffeature_4ks2test_shuffle%d.txt"%(str(type), str(cell), sel_num)
+	filename1 = "test_%s%s_motiflab_shuffle%d.txt"%(str(type), str(cell), sel_num)
+	filename2 = "test_%s%s_motifprob_shuffle%d.txt"%(str(type), str(cell), sel_num)
+	filename3 = "test_%s%s_motiffeature_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
 	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
