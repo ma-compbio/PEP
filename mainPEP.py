@@ -374,7 +374,6 @@ def run_motif(word, num_features,k,type,cell):
 	y1 = np.ravel(data['lab_m'])
 	y1[y1<0]=0
 	print "%d %d" % (sum(y1==1), sum(y1==0))
-	print "load motif data shuffled"
 	filename = "./pairs_%s%s_motif_serial.mat"%(str(type),str(cell))
 	data1 = scipy.io.loadmat(filename)
 	serial1 = np.ravel(data1['serial1'])
@@ -397,14 +396,13 @@ def run_motif(word, num_features,k,type,cell):
 	print "y2: %d %d" % (sum(y2==1), sum(y2==0))
 	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x2,y2,k_fold,k_fold1,serial)
 
-	sel_num = 400
-	filename1 = "test_%s%s_motiflab_sel%da.txt"%(str(type), str(cell), sel_num)
-	filename2 = "test_%s%s_motifprob_sel%da.txt"%(str(type), str(cell), sel_num)
-	filename3 = "test_%s%s_motiffeature_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename1 = "test_%s%s_motiflab.txt"%(str(type), str(cell))
+	filename2 = "test_%s%s_motifprob.txt"%(str(type), str(cell))
+	filename3 = "test_%s%s_motiffeature.txt"%(str(type), str(cell))
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
 	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
-	filename4 = "test_%s%s_motifthresh2_sel%da.txt"%(str(type), str(cell), sel_num)
+	filename4 = "test_%s%s_motifthresh2.txt"%(str(type), str(cell))
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Cross validation for PEP-Integrate
@@ -459,7 +457,7 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 	print tmp.shape
 	print x.shape
 
-	sel_numvec = np.array([50,100,200,500,600])
+	sel_numvec = np.array([50,100,200,300,400,500,600])
 	cnt = 0
 	for sel_num in sel_numvec:
 		print("select_num: %d" % sel_num)
