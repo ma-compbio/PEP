@@ -6,6 +6,6 @@ by the trained word embedding model
 
 If you use the command python PEP.py -c CellName -t 'ep'(e.g., python
 PEP.py -c 'GM12878' -t 'ep'), files named "unlabeled_trainraw_enhancer_GM12878",
-"unlabeled_trainraw_promoter_GM12878" and "supervised_GM12878_ep" will
+"unlabeled_trainraw_promoter_GM12878", "unlabeled_train_enhancer_GM12878", 
+"unlabeled_train_promoter_GM12878", and "supervised_GM12878_ep" will
 be generated in this folder.
-
