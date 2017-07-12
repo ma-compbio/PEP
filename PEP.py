@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-  
 from optparse import OptionParser
-import genLabelData,genUnlabelData,mainEdit,genVecs
+import genLabelData,genUnlabelData,mainPEP,genVecs
 import os.path
 
 def parse_args():
