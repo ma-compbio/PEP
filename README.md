@@ -27,7 +27,7 @@ Functions included but not limited to:
   
 - run_shuffle
 
-  Shuffle feature orders for testing of PEP modules and repeating feature importance estimation to address that estimated importance can be affected by the order of features if they have equal predicitive effect
+  Shuffle feature orders for testing of PEP modules and repeating feature importance estimation to address the problem that estimated importance can be affected by the order of features if they have equal predicitive effect
   
 - parametered_cv
 
