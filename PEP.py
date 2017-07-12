@@ -41,7 +41,7 @@ def run(word,num_features,generate,type,cell,k,integrate,sel):
 	if integrate == "false":
 		mainPEP.run_word(word,num_features,k,type,cell)
 	else:
-		mainPEP.run_shuffle(word,num_features,k,type,cell,sel)
+		mainPEP.run_integrate(word,num_features,k,type,cell,sel)
 
 
 def main():
