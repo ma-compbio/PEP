@@ -34,7 +34,6 @@ def getData(type,cell):
 def getWord_model(word,num_features,min_count,type,cell):
 	word_model1 = ""
 	model_name = str(cell)+"_enhancer"
-	#model_name = "pe_6"
 	
 	if not os.path.isfile("./" + model_name):
 		sentence = LineSentence("./Data/Learning/unlabeled_train_enhancer_"+str(cell),max_sentence_length=15000)
@@ -155,10 +154,6 @@ def getAvgFeatureVecs(data,model1,model2, num_features, word,k,type,cell):
 		for i in xrange(len(vec_tfidf)):
 			dnaFeatureVecs[counter][0:k*num_features] += model1[dict1[vec_tfidf[i][0]]] * vec_tfidf[i][1]
 		
-		#dnaFeatureVecs[counter][0:k*num_features] = makeFeatureVecs(DNA, model1, num_features,word,k,temp)
-		#dnaFeatureVecs[counter][0:k*num_features] = np.mean(model1[DNA],axis = 0)
-		#dnaFeatureVecs[counter][0:k*num_features] = mean2max(model1[DNA])
-		#dnaFeatureVecs[counter][0:k*num_features] = np.max(model1[DNA],axis = 0)
 		counter += 1
 	
 	print
@@ -206,10 +201,6 @@ def getAvgFeatureVecs(data,model1,model2, num_features, word,k,type,cell):
 		for i in xrange(len(vec_tfidf)):
 			dnaFeatureVecs[counter][k*num_features:2*k*num_features] += model2[dict2[vec_tfidf[i][0]]] * vec_tfidf[i][1]
 		
-		#dnaFeatureVecs[counter][k*num_features:2*k*num_features] = makeFeatureVecs(dna, model2, num_features,word,k,temp)
-		#dnaFeatureVecs[counter][k*num_features:2*k*num_features] = np.mean(model2[dna],axis = 0)
-		#dnaFeatureVecs[counter][k*num_features:2*k*num_features] = mean2max(model2[dna])
-		#dnaFeatureVecs[counter][k*num_features:2*k*num_features] = np.max(model1[dna],axis = 0)
 		counter += 1
 	print
 	np.save("./Datavecs/datavecs_"+str(cell)+"_"+str(type)+".npy",dnaFeatureVecs)
