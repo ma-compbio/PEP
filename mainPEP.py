@@ -145,8 +145,6 @@ def threshold_estimate(x,y):
 def threshold_estimate_cv(x,y,k_fold):
 	print "%d %d %d" % (y.shape[0], sum(y==1), sum(y==0))
 	kf1 = StratifiedKFold(y, n_folds=k_fold, shuffle=True, random_state=0)
-	#print type(x)
-	#print type(y)
 	threshold = np.zeros((k_fold),dtype="float32")
 	cnt = 0
 	for train_index, test_index in kf1:
@@ -183,7 +181,7 @@ def parametered_cv(x,y,k_fold,k_fold1):
 	features2 = np.array([[0,0]])
 	thresh = 0.5
 	cnt = 0
-	print "%d %d" % (sum(y==1), sum(y==0))
+	print "Positive: %d Negative: %d" % (sum(y==1), sum(y==0))
 	for train_index, test_index in kf:
 		x_train, x_test = x[train_index], x[test_index]
 		y_train, y_test = y[train_index], y[test_index]
@@ -221,9 +219,7 @@ def parametered_cv(x,y,k_fold,k_fold1):
 		features2 = np.concatenate((features2,feature_2),axis=0)
 		
 	pred = np.transpose(np.array((index,label,yfit)))
-	print "%d %d" % (metrics.shape[0],metrics.shape[1])
 	aver_metrics = np.mean(metrics,axis=0)
-	print aver_metrics.shape
 	aver_metrics = np.reshape(aver_metrics,(1,metrics.shape[1]))
 	metrics_1 = np.concatenate((metrics,aver_metrics),axis=0)
 	print aver_metrics
@@ -408,36 +404,39 @@ def run_integrate(word, num_features,k,type,cell,sel_num,thresh_mode):
 		np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Shuffle feature orders for testing of PEP modules and repeating feature importance estimation
-def run_shuffle(word, num_features,k,type,cell,sel_num):
+def run_shuffle(word, num_features,k,type,cell,sel_num,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 	
 	word = int(word)
 	num_features = int(num_features)
 	k = int(k)
-	sel_num = int(sel_num)
-	print "shuffle features..."
+	sel_num = int(sel_num)	
 
+	print "Loading motif data"
 	filename = "./pairs_%s%s_motif.mat"%(str(type),str(cell))
 	data = scipy.io.loadmat(filename)
 	x1 = np.asarray(data['seq_m'])
 	y = np.ravel(data['lab_m'])
 	y[y<0]=0
-	print "Loading motif data"
+	print "Positive: %d Negative: %d" % (sum(y==1), sum(y==0))
 
 	serial3 = np.array(range(0,x1.shape[1]))
 	print serial3.shape
+	print "shuffle features..."
 	random.shuffle(serial3)
-	x = x1[:,serial3]
-
-	print "%d %d %d %d"%(x1.shape[0],x1.shape[1],x.shape[0],x.shape[1])
-	print "y: %d %d" % (sum(y==1), sum(y==0))
+	x = x1[:,serial3]	
 
 	filename4 = "test_%s%s_motifidx_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename4, np.array((range(0,x1.shape[1]),serial3)).T, fmt='%d %d', delimiter='\t')
 
 	k_fold = 10
-	k_fold1 = 0
+	if thresh_mode==0:
+		k_fold1 = 0
+	elif thresh_mode==1:
+		k_fold1 = 1
+	else:
+		k_fold1 = 5
 	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1)
 
 	filename1 = "test_%s%s_motiflab_shuffle%d.txt"%(str(type), str(cell), sel_num)
