@@ -87,6 +87,8 @@ If you use the command python PEP.py -c CellName -t 'ep', the procedures of PEP-
 - "datavecs_CellName_ep.npy" will be generated in folder Datavecs, which comprises the feature representation of enhancer/promoter sequences obtained from the word embbeding models (generated in the same directory with source code, named as "CellName_enahcer" and "CellName_promoter") and TF-IDF dictionaries (generated in Data, named as "enhancertfidfCellName" and "enhancertfidfCellName") using weighted pooling.
 - The prediction results will be output in the same directory of the source code.
 
+If you want to begin a new experiment for the data of a cell line which you have used before, please remove all the old data in the folders Data/Learning and DataVecs of this cell line or place them in another directory. PEP will not overwrite the exsiting files in these two filefolders and will reuse the exsting files by default.
+
 Please update the "genome_path" on line 37 of genLabelData.py to be the directory where the DNA sequence data of each chromosome of the studied genome are placed. PEP-Word will use the DNA sequence data in this directory to extract sequences for the enhancer and promoter regions.
 
 Please change the cell name used in "unlabeled_train_enhancer_CellName" and "unlabeled_train_promoter_CellName" on line 21 and line 25 of genVecs.py to the CellName you use in the command line accordingly. 
