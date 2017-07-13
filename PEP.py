@@ -41,7 +41,7 @@ def run(word,num_features,generate,type,cell,k,integrate,sel,thresh_mode):
 	word = int(word)
 	num_features = int(num_features)
 	k=int(k)
-	sel_num=int(sel_num)
+	sel=int(sel)
 	thresh_mode=int(thresh_mode)
 	
 	if integrate == "false":
