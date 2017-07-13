@@ -295,7 +295,7 @@ def run_word(word,num_features,k,type,cell,thresh_mode):
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Cross validation for PEP-Motif
-def run_motif(word, num_features,k,type,cell,thresh_mode):
+def run_motif(type,cell,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 	
