@@ -124,52 +124,6 @@ def balance_data(data,dataDataVecs):
 	data.index = xrange(len(data))
 	return data,dataDataVecs
 
-# Prediction and evaluation using cross validation with PEP-Word without retaining probabilistic output from each round 
-def run(word, num_features,k,type,cell):
-
-	warnings.filterwarnings("ignore")
-
-	global accuracy,precision,recall,f1,mcc,auc,aupr,resultpredict,resultproba,resultlabel
-	accuracy,precision,recall,f1,mcc,auc,aupr=0,0,0,0,0,0,0
-	resultpredict = np.zeros((1),dtype = "int")
-	resultlabel = np.zeros((1),dtype="int")
-	resultproba = np.zeros((1),dtype = "float32")
-	resultindex = np.zeros((1),dtype="int")
-	
-	word = int(word)
-	num_features = int(num_features)
-	k=int(k)
-
-	# Read data
-	data = getData(type,cell)
-
-	print "Loading Datavecs"
-	dataDataVecs = np.load("./Datavecs/datavecs_"+str(cell)+"_"+str(type)+".npy")
-	dataDataVecs = sklearn.preprocessing.StandardScaler().fit_transform(dataDataVecs)
-
-
-	estimator = xgb.XGBClassifier(max_depth=10,learning_rate=0.1, n_estimators=1000,nthread=50)
-
-	cv = StratifiedKFold(y = data["label"], n_folds = 10, shuffle = True, random_state = 0)
-
-	for train_index, test_index in cv:
-		resultindex = np.hstack((resultindex,test_index))
-	
-	scores= cross_val_score(estimator, dataDataVecs, data["label"],\
-							scoring = score_func, cv = cv,\
-	 						n_jobs = 1,fit_params={'sample_weight': data["weight"]})
-	
-	print "precision = %r\trecall = %r\tf1 = %r\taccuracy = %r\t mcc = %r\t auc = %r\t aupr = %r\n" \
-	%(precision/10,recall/10,f1/10,accuracy/10,mcc/10,auc/10,aupr/10)
-
-	result = np.vstack((resultindex,resultlabel,resultpredict,resultproba))
-	result = result.T
-	result = result[1:len(result)]
-	df = pd.DataFrame(result,columns=['index','label','predict','proba'])
-	df = df.sort(columns='index')
-
-	df.to_csv("./Result/"+str(cell)+str(type)+".csv",index = False)
-
 # Estimate threshold for the classifier base on a single split of training/test data
 def threshold_estimate(x,y):
 	x_train, x_test, y_train, y_test = cross_validation.train_test_split(x, y, test_size=0.1, random_state=0)
@@ -307,7 +261,7 @@ def parametered_single(x_train,y_train,x_test,y_test,thresh_opt):
 	return metrics, pred, prob, features1
 
 # Cross validation for PEP-Word
-def run_word(word,num_features,k,type,cell):
+def run_word(word,num_features,k,type,cell,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 	
@@ -326,8 +280,12 @@ def run_word(word,num_features,k,type,cell):
 	y = np.asarray(y)
 	
 	k_fold = 10
-	k_fold1 = 0
-	serial = 0
+	if thresh_mode==0:
+		k_fold1 = 0
+	elif thresh_mode==1:
+		k_fold1 = 1
+	else:
+		k_fold1 = 5
 	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1)
 
 	filename1 = "test_%s%s_wordlab.txt"%(str(type), str(cell))
@@ -340,61 +298,29 @@ def run_word(word,num_features,k,type,cell):
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Cross validation for PEP-Motif
-def run_motif(word, num_features,k,type,cell):
+def run_motif(word, num_features,k,type,cell,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 	
-	word = int(word)
-	num_features = int(num_features)
-	k=int(k)
-	k=int(k)
 	print "cross_validation_training"
 	print "motif features used"
 
 	# Read data
-	data = getData(type,cell)
-
-	filename1 = "./ep%s_sel_union_balanced_inter_4ks2_add2a.txt"%(str(cell))
-	filename2 = "./ep%s_sel_union_balanced_inter_4ks2_add2a.mat"%(str(cell))
-	if(os.path.exists(filename1)==True):
-		f = open(filename1, 'r')
-		print("Feature importance 1 loaded")
-		sel_idx = [map(int,line.split('\t')) for line in f]
-		sel_idx = np.ravel(np.asarray(sel_idx))
-	elif(os.path.exists(filename2)==True):
-		tmp = scipy.io.loadmat(filename2)
-		print("Feature importance 2 loaded")
-		sel_idx = np.ravel(tmp['sel_vec'])
-	else:
-		print "Error of file importance file!"
-
 	filename = "./pairs_%s%s_motif.mat"%(str(type),str(cell))
 	data = scipy.io.loadmat(filename)
-	x1 = np.asmatrix(data['seq_m'])
-	y1 = np.ravel(data['lab_m'])
-	y1[y1<0]=0
-	print "%d %d" % (sum(y1==1), sum(y1==0))
-	filename = "./pairs_%s%s_motif_serial.mat"%(str(type),str(cell))
-	data1 = scipy.io.loadmat(filename)
-	serial1 = np.ravel(data1['serial1'])
-	serial2 = np.ravel(data1['serial2'])
-	print serial1.shape
-	x2 = np.zeros(x1.shape)
-	y2 = np.zeros(x1.shape[0])
-	print "y1: %d %d" % (sum(y1==1), sum(y1==0))
-	print "y2: %d %d" % (sum(y2==1), sum(y2==0))
-	x2[serial1,:] = x1
-	y2[serial1] = y1
-	print "y1: %d %d" % (sum(y2==1), sum(y2==0))
-	print "y2: %d %d" % (sum(y2==1), sum(y2==0))
-	print "generate motif data shuffled"
-	x2 = x2[:,sel_idx]
-	
+	x = np.asmatrix(data['seq_m'])
+	y = np.ravel(data['lab_m'])
+	y[y<0]=0
+	print "Positive: %d  Negative: %d" % (sum(y==1), sum(y==0))
+		
 	k_fold = 10
-	k_fold1 = 5
-	serial = 0
-	print "y2: %d %d" % (sum(y2==1), sum(y2==0))
-	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x2,y2,k_fold,k_fold1,serial)
+	if thresh_mode==0:
+		k_fold1 = 0
+	elif thresh_mode==1:
+		k_fold1 = 1
+	else:
+		k_fold1 = 5
+	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1,serial)
 
 	filename1 = "test_%s%s_motiflab.txt"%(str(type), str(cell))
 	filename2 = "test_%s%s_motifprob.txt"%(str(type), str(cell))
@@ -406,7 +332,7 @@ def run_motif(word, num_features,k,type,cell):
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
 # Cross validation for PEP-Integrate
-def run_integrate(word, num_features,k,type,cell,sel_num):
+def run_integrate(word, num_features,k,type,cell,sel_num,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 
@@ -459,6 +385,13 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 
 	sel_numvec = np.array([50,100,200,300,400,500,600])
 	cnt = 0
+	k_fold = 10
+	if thresh_mode==0:
+		k_fold1 = 0
+	elif thresh_mode==1:
+		k_fold1 = 1
+	else:
+		k_fold1 = 5
 	for sel_num in sel_numvec:
 		print("select_num: %d" % sel_num)
 
@@ -469,8 +402,6 @@ def run_integrate(word, num_features,k,type,cell,sel_num):
 		print "%d %d %d %d %d %d"%(x.shape[0],x.shape[1],x1.shape[0],x1.shape[1],x2.shape[0],x2.shape[1])
 		print "%d %d" % (sum(y_2==1), sum(y_2==0))
 	
-		k_fold = 10
-		k_fold1 = 5
 		metrics_vec, pred, predicted, features1, features2 = parametered_cv(x_2,y_2,k_fold,k_fold1)
 
 		filename1 = "test_%s%s_wordlab_sel%dcv.txt"%(str(type), str(cell), sel_num)
