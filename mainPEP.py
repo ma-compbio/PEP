@@ -265,9 +265,6 @@ def run_word(word,num_features,k,type,cell,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 	
-	word = int(word)
-	num_features = int(num_features)
-	k=int(k)
 	print "cross_validation_training"
 
 	# Read data
@@ -336,10 +333,6 @@ def run_integrate(word, num_features,k,type,cell,sel_num,thresh_mode):
 
 	warnings.filterwarnings("ignore")
 
-	word = int(word)
-	num_features = int(num_features)
-	k=int(k)
-	sel_num=int(sel_num)
 	print "cross_validation_training"
 	print "selected indices: %d"%(int(sel_num))
 
