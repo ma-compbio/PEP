@@ -38,6 +38,12 @@ def run(word,num_features,generate,type,cell,k,integrate,sel,thresh_mode):
 		if not os.path.isfile("./Datavecs/datavecs_"+str(cell)+"_"+str(type)+".npy"):
 			genVecs.run(word,num_features,k,type,cell)
 	
+	word = int(word)
+	num_features = int(num_features)
+	k=int(k)
+	sel_num=int(sel_num)
+	thresh_mode=int(thresh_mode)
+	
 	if integrate == "false":
 		mainPEP.run_word(word,num_features,k,type,cell,thresh_mode)
 		# mainPEP.run_motif(type,cell)
