@@ -46,7 +46,7 @@ def run(word,num_features,generate,type,cell,k,integrate,sel,thresh_mode):
 	
 	if integrate == "false":
 		mainPEP.run_word(word,num_features,k,type,cell,thresh_mode)
-		# mainPEP.run_motif(type,cell)
+		# mainPEP.run_motif(type,cell,thresh_mode)
 	else:
 		mainPEP.run_integrate(word,num_features,k,type,cell,sel,thresh_mode)
 
