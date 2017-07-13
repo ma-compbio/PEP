@@ -70,7 +70,7 @@ python PEP.py [Options]
 - -w, --word : the length of word (K-mer) used for word embedding model training, default = 6
 - -i, --integrate : to use integrated features or not, default = "false"
 - -s, --sel : the number of motif features to be used in the feature integration (PEP-Integrate) mode, default=50
-- -e, --thresh_mode: the mode of estimating threshold for the predictor: 0- default threshold (threshold = 0.5); 1- simple mode; 2- 5 fold inner round cross validation , default=1
+- -e, --thresh_mode: the mode of estimating threshold for the predictor: 0- default threshold (threshold = 0.5); 1- simple mode (randomly split the training data into 90% for training and 10% for validation to estimate a threshold); 2- threshold from 5 fold inner round cross validation, default=1
 
 Example: python PEP.py -c 'GM12878' -t 'ep' (using PEP-Word for training a word embedding model and performing enhancer promoter interaction prediction in cell line K562)
 
