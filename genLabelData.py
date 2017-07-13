@@ -34,6 +34,7 @@ def run(type,cell):
 	dict_pos={}
 
 
+	genome_path = "./"    # Please add the directory where the genome sequence data are placed
 	# Generate positive samples
 	for i in xrange(total):
 		
@@ -47,8 +48,7 @@ def run(type,cell):
 		if dict_pos.has_key(chromosome):
 			strs = dict_pos[chromosome]
 		else:
-			#strs = processSeq.getString("./Data/" + chromosome + ".fasta")
-			strs = processSeq.getString("../promoter-enhancer/Data/" + chromosome + ".fa")
+			strs = processSeq.getString(genome_path + chromosome + ".fa")
 			dict_pos[chromosome] = strs
 
 		enhancer_start = table["enhancer_start"][i] - 1
