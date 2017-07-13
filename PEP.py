@@ -19,7 +19,7 @@ def parse_args():
 	return opts
 
 
-def run(word,num_features,generate,type,cell,k,integrate,sel):
+def run(word,num_features,generate,type,cell,k,integrate,sel,thresh_mode):
 
 	if(os.path.exists("./Data/Learning")==False):
 		os.makedirs("./Data/Learning")
@@ -39,14 +39,15 @@ def run(word,num_features,generate,type,cell,k,integrate,sel):
 			genVecs.run(word,num_features,k,type,cell)
 	
 	if integrate == "false":
-		mainPEP.run_word(word,num_features,k,type,cell)
+		mainPEP.run_word(word,num_features,k,type,cell,thresh_mode)
+		# mainPEP.run_motif(type,cell)
 	else:
-		mainPEP.run_integrate(word,num_features,k,type,cell,sel)
+		mainPEP.run_integrate(word,num_features,k,type,cell,sel,thresh_mode)
 
 
 def main():
 	opts = parse_args()
-	run(opts.word,opts.feature,opts.generate,opts.type,opts.cell,opts.k,opts.integrate,opts.sel)
+	run(opts.word,opts.feature,opts.generate,opts.type,opts.cell,opts.k,opts.integrate,opts.sel,opts.thresh_mode)
 
 if __name__ == '__main__':
 	main()
