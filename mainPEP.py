@@ -275,6 +275,7 @@ def run_word(word,num_features,k,type,cell,thresh_mode):
 	x = sklearn.preprocessing.StandardScaler().fit_transform(dataDataVecs)
 	y = data["label"]
 	y = np.asarray(y)
+	print "Positive: %d  Negative: %d" % (sum(y==1), sum(y==0))
 	
 	k_fold = 10
 	if thresh_mode==0:
