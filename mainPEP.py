@@ -178,7 +178,6 @@ def parametered_cv(x,y,k_fold,k_fold1):
 	thresholds = []
 	predicted = np.array([[0,0]])
 	features1 = np.array([[0,0]])
-	features2 = np.array([[0,0]])
 	thresh = 0.5
 	cnt = 0
 	print "Positive: %d Negative: %d" % (sum(y==1), sum(y==0))
@@ -210,20 +209,17 @@ def parametered_cv(x,y,k_fold,k_fold1):
 		print metrics[cnt,:]
 		cnt += 1
 		predicted = np.concatenate((predicted,prob),axis=0)	
-		importances, importances_1 = clf.feature_importances_
+		importances = clf.feature_importances_
 		indices1 = np.argsort(importances)[::-1]
 		feature_1 = np.transpose(np.array((indices1,importances[indices1])))
 		features1 = np.concatenate((features1,feature_1),axis=0)
-		indices2 = np.argsort(importances_1)[::-1]
-		feature_2 = np.transpose(np.array((indices2,importances_1[indices2])))
-		features2 = np.concatenate((features2,feature_2),axis=0)
 		
 	pred = np.transpose(np.array((index,label,yfit)))
 	aver_metrics = np.mean(metrics,axis=0)
 	aver_metrics = np.reshape(aver_metrics,(1,metrics.shape[1]))
 	metrics_1 = np.concatenate((metrics,aver_metrics),axis=0)
 	print aver_metrics
-	return metrics_1, pred, predicted[1:,], features1[1:,], features2[1:,]
+	return metrics_1, pred, predicted[1:,], features1[1:,]
 
 # Single run using gradient tree boosting
 def parametered_single(x_train,y_train,x_test,y_test,thresh_opt):
@@ -249,7 +245,7 @@ def parametered_single(x_train,y_train,x_test,y_test,thresh_opt):
 	metrics = np.array((thresh,precision,recall,f1,mcc))
 	print metrics
 
-	importances, importances_1 = clf.feature_importances_
+	importances = clf.feature_importances_
 	indices1 = np.argsort(importances)[::-1]
 	features1 = np.transpose(np.array((indices1,importances[indices1])))
 
@@ -280,14 +276,14 @@ def run_word(word,num_features,k,type,cell,thresh_mode):
 		k_fold1 = 1
 	else:
 		k_fold1 = 5
-	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1)
+	metrics_vec, pred, predicted, features1 = parametered_cv(x,y,k_fold,k_fold1)
 
 	filename1 = "test_%s%s_wordlab.txt"%(str(type), str(cell))
 	filename2 = "test_%s%s_wordprob.txt"%(str(type), str(cell))
 	filename3 = "test_%s%s_wordfeature.txt"%(str(type), str(cell))
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
-	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
+	np.savetxt(filename3, features1, fmt='%d %f', delimiter='\t')
 	filename4 = "test_%s%s_wordthresh.txt"%(str(type), str(cell))
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
@@ -314,14 +310,14 @@ def run_motif(type,cell,thresh_mode):
 		k_fold1 = 1
 	else:
 		k_fold1 = 5
-	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1,serial)
+	metrics_vec, pred, predicted, features1 = parametered_cv(x,y,k_fold,k_fold1,serial)
 
 	filename1 = "test_%s%s_motiflab.txt"%(str(type), str(cell))
 	filename2 = "test_%s%s_motifprob.txt"%(str(type), str(cell))
 	filename3 = "test_%s%s_motiffeature.txt"%(str(type), str(cell))
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
-	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
+	np.savetxt(filename3, features1, fmt='%d %f', delimiter='\t')
 	filename4 = "test_%s%s_motifthresh2.txt"%(str(type), str(cell))
 	np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
@@ -392,14 +388,14 @@ def run_integrate(word, num_features,k,type,cell,sel_num,thresh_mode):
 		print "%d %d %d %d %d %d"%(x.shape[0],x.shape[1],x1.shape[0],x1.shape[1],x2.shape[0],x2.shape[1])
 		print "%d %d" % (sum(y_2==1), sum(y_2==0))
 	
-		metrics_vec, pred, predicted, features1, features2 = parametered_cv(x_2,y_2,k_fold,k_fold1)
+		metrics_vec, pred, predicted, features1 = parametered_cv(x_2,y_2,k_fold,k_fold1)
 
 		filename1 = "test_%s%s_wordlab_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		filename2 = "test_%s%s_wordprob_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		filename3 = "test_%s%s_wordfeature_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 		np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
-		np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
+		np.savetxt(filename3, features1, fmt='%d %f', delimiter='\t')
 		filename4 = "test_%s%s_wordthresh2_sel%dcv.txt"%(str(type), str(cell), sel_num)
 		np.savetxt(filename4, metrics_vec, fmt='%f %f %f %f %f', delimiter='\t')
 
@@ -437,13 +433,13 @@ def run_shuffle(word, num_features,k,type,cell,sel_num,thresh_mode):
 		k_fold1 = 1
 	else:
 		k_fold1 = 5
-	metrics_vec, pred, predicted, features1, features2 = parametered_cv(x,y,k_fold,k_fold1)
+	metrics_vec, pred, predicted, features1 = parametered_cv(x,y,k_fold,k_fold1)
 
 	filename1 = "test_%s%s_motiflab_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	filename2 = "test_%s%s_motifprob_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	filename3 = "test_%s%s_motiffeature_shuffle%d.txt"%(str(type), str(cell), sel_num)
 	np.savetxt(filename1, pred, fmt='%d %d %d', delimiter='\t')
 	np.savetxt(filename2, predicted, fmt='%f %f', delimiter='\t')
-	np.savetxt(filename3, np.concatenate((features1,features2),axis=1), fmt='%d %f %d %f', delimiter='\t')
+	np.savetxt(filename3, features1, fmt='%d %f', delimiter='\t')
 
  

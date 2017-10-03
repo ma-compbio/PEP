@@ -13,7 +13,7 @@ def parse_args():
 	parser.add_option("-w","--word",default = "6")
 	parser.add_option("-i","--integrate",default="false", help="Use integrated features or not")
 	parser.add_option("-s","--sel",default=50, help="The number of motif feature to be used in the combination mode")
-	parser.add_option("-e","--thresh_mode",default=1,help="The mode of estimating threshold:0-default;1-simple mode;2-cv mode")
+	parser.add_option("-e","--thresh_mode",default=1,help="The mode of estimating threshold:0-default threshod;1-simple mode;2-cv mode")
 
 	(opts, args) = parser.parse_args()
 	return opts
