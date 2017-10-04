@@ -232,7 +232,7 @@ def parametered_single(x_train,y_train,x_test,y_test,thresh_opt):
 	if thresh_opt==1:
 		thresh = threshold_estimate(x_train,y_train)
 
-	clf = xgb.XGBClassifier(max_depth=5, learning_rate=0.1, n_estimators=500, nthread=50)
+	clf = xgb.XGBClassifier(max_depth=10, learning_rate=0.1, n_estimators=500, nthread=50)
 	weight = float(sum(y_train<1))/float(sum(y_train==1))
 	w1 = np.array([1]*y_train.shape[0])
 	w1[y_train==1]=weight
