@@ -107,6 +107,7 @@ PEP requires the following packages to be installed:
 - scikit-learn (tested on version 0.17)
 - pandas (tested on version 0.17.1)
 - numpy (tested on version 1.11.1)
+- gensim (tested on version 0.13.1)
 
 You could install the Anaconda (avilable from https://www.continuum.io/downloads) for convenience, which provides a open souce collection of widely used data science packages including Python and numpy. PEP is tested using Anaconda 4.1.1.
 
