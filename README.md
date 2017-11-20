@@ -102,7 +102,7 @@ There is a file folder for each studied cell line. There are three files in each
 - pairs_ep[CellName]_motif_serial.mat : The serial number of each sample in the feature matrix of pairs_ep[CellName]_motif.mat, which is in the same order as the rows of the feature matrix. The serial numbers are used to match the features generated in PEP-Word and the features generated in PEP-Motif for PEP-Integrate, if PEP-Integrate is called. PEP-Word and PEP-Motif generated features for samples in different orders, so we prepared the serial numbers to match the features of the same sample. 
 - ep[CellName]_sel_union_balanced_inter.mat: The ranking of motif features based on their feature importance estimated by PEP-Motif. The ranking is in the ascending order. Each number represents a column in the feature matrix (index starts from 0). For example, the first number represents the most important motif feature estimated by PEP-Motif. The number k represents the motif corresponding to the (k+1)th column of the feature matrix. This feature importance ranking data are used to select a subset of PEP-Motif features to combine with PEP-Word features in PEP-Integrate, if PEP-Intergrate is called. 
 
-To use the motif feature data and the auxiliary data, please place them in the same directory with the source code. If you're using your own motif features, please change the paths and filenames of the motif features in PEP.py accordingly. 
+To use the motif feature data and the auxiliary data, please place them in the same directory with the source code. If you're using your own motif features, please change the paths and filenames of the motif feature data or auxiliary data in mainPEP.py accordingly. 
 
 References:
 
