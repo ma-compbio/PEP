@@ -1,5 +1,5 @@
 **********************************************************************************
-# PEP (Prediction Enhancer Promoter interactions)
+# PEP (Predict Enhancer Promoter interactions)
 
 PEP is a framework for predicting long-range enhancer-promoter interactions (EPI) incorporating two strategies for extracting features directly from the DNA sequences of enhancer and promoter elements. There are three modules in PEP, which are PEP-Motif, PEP-Word and PEP-Integrate. PEP-Integrate combines selected features generated from PEP-Motif and PEP-Word. Gradient Tree Boosting is used in each of the three modules to training a predictor for EPIs based on respective feature representations of enhancer-promoter pairs. In PEP-Motif, we search for patterns of known transcription factor binding site (TFBS) motifs in the sequences involved in EPI. The normalized occurrence frequencies of these TFBS motifs are then used as features representing an enhancer or a promoter. In PEP-Word, we use the word embedding model to embed the sequences of enhancer and promoter regions into a new feature space. Each sequence is then represented by a continuous feature vector. In both PEP-Motif and PEP-Word modules, individual feature vectors of paired regions are concatenated to form feature representations of the given enhancer-promoter pair.  
 
