@@ -310,7 +310,7 @@ def run_motif(type,cell,thresh_mode):
 		k_fold1 = 1
 	else:
 		k_fold1 = 5
-	metrics_vec, pred, predicted, features1 = parametered_cv(x,y,k_fold,k_fold1,serial)
+	metrics_vec, pred, predicted, features1 = parametered_cv(x,y,k_fold,k_fold1)
 
 	filename1 = "test_%s%s_motiflab.txt"%(str(type), str(cell))
 	filename2 = "test_%s%s_motifprob.txt"%(str(type), str(cell))
