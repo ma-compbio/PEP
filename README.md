@@ -123,6 +123,4 @@ You could install the Anaconda (avilable from https://www.continuum.io/downloads
 ************************************************************************************
 If you would like to cite PEP, please consider the following citation:
 
-Yang Yang, Yang Zhang, Bing Ren, Jesse R. Dixon, Jian Ma. (2019). "Comparing 3D genome organization in multiple species using Phylo-HMRF". Cell Systems 8(6):494-505.e14.
-
 Yang Yang, Ruochi Zhang, Shashank Singh, Jian Ma. (2017). "Exploiting Sequence-based Features for Predicting Enhancer-Promoter Interactions". In Proceedings of the 25th Conference on Intelligent Systems for Molecular Biology (ISMB 2017), Bioinformatics, 33(14), i252-i260. 
